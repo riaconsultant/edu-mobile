@@ -1,0 +1,32 @@
+CREATE TABLE user_sessions (
+    session_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    active_role ENUM(
+        'SuperAdmin',
+        'Principal',
+        'ClassTeacher',
+        'SubjectTeacher',
+        'Student',
+        'Parent',
+        'Accountant',
+        'Librarian',
+        'HRCoordinator',
+        'Counselor',
+        'TransportCoordinator',
+        'ITSupport',
+        'Alumni',
+        'ExternalAuditor',
+        'SchoolBoard'
+    ) NOT NULL,
+    session_token VARCHAR(255) NOT NULL UNIQUE,
+    login_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_activity DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45),
+    device_info VARCHAR(255),
+    session_expiry DATETIME,
+    status ENUM('Active', 'Expired', 'LoggedOut') DEFAULT 'Active',
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_session_token (session_token),
+    INDEX idx_active_role (active_role)
+);
