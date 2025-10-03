@@ -1,0 +1,11 @@
+SELECT 
+    user_role_id AS profile_id,
+    profile_label,
+    role,
+    role_specific_data
+FROM 
+    user_roles
+WHERE 
+    user_id = :user_id
+ORDER BY 
+    profile_label ASC;
