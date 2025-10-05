@@ -202,7 +202,6 @@ CREATE TABLE permissions (
     user_role_id BIGINT NOT NULL,
     module VARCHAR(50) NOT NULL,
     access_level ENUM('Read', 'Write', 'Admin') NOT NULL,
-    FOREIGN KEY (user_role_id) REFERENCES user_roles(user_role_id) ON DELETE CASCADE,
     INDEX idx_user_role_id (user_role_id)
 );
 </xaiArtifact>
