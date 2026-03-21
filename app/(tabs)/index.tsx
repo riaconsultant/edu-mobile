@@ -1,112 +1,127 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, View } from "react-native";
+import { Link } from "expo-router";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useNavigation } from 'expo-router';
-import AppIcon from '@/components/ui/AppIcon';
+/** Dashboard screen with 6 main features. */
+export default function DashboardScreen() {
+  const colorScheme = useColorScheme() ?? "light";
 
-export default function HomeScreen() {
-  const navigation = useNavigation();
-  const icons = [
-    { name: 'Profile', screen: 'ProfileScreen', icon: 'account-circle-outline' },
-    { name: 'Notifications', screen: 'NotificationsScreen', icon: 'bell-outline' },
-    { name: 'Announcement', screen: 'AnnouncementScreen', icon: 'bell-ring-outline' },
-    { name: 'Attendance', screen: 'AttendanceScreen', icon: 'calendar-check' },
-    { name: 'Assignments', screen: 'AssignmentsScreen', icon: 'file-document-outline' },
-    { name: 'Fees', screen: 'FeesScreen', icon: 'credit-card-outline' },
-    // { name: 'Gallery', screen: 'GalleryScreen', icon: require('./../../../assets/images/card.png') },
-    { name: 'Diary', screen: 'DiaryScreen', icon: 'notebook' },
-    { name: 'Exams', screen: 'ExamsScreen', icon: 'briefcase-variant' },
-    { name: 'Subjects', screen: 'SubjectsScreen', icon: 'book-open-variant' },
-    { name: 'Leave', screen: 'LeaveScreen', icon: 'airplane' },
-    { name: 'Events', screen: 'EventsScreen', icon: 'calendar-star' },
-    { name: 'Library', screen: 'LibraryScreen', icon: 'bookshelf' },
-    // { name: 'Transport', screen: 'TransportScreen', icon: require('./../../../assets/images/favicon.png') },
-    { name: 'Concerns', screen: 'ConcernsScreen', icon: 'message-alert-outline' },
-    // setting, reports
-    // { name: 'Support', screen: 'SupportScreen', icon: 'question-outline' },
-    { name: 'Reports', screen: 'ReportsScreen', icon: 'chart-line' },
-    { name: 'Setting', screen: 'SettingScreen', icon: 'cog-outline' },
+  const dashboardItems = [
+    {
+      name: "Attendance",
+      icon: "checkmark.circle.fill" as const,
+      href: "/attendance",
+      color: "#4CAF50",
+    },
+    {
+      name: "Announcement",
+      icon: "bell.fill" as const,
+      href: "/announcement",
+      color: "#2196F3",
+    },
+    {
+      name: "Assignment",
+      icon: "doc.text.fill" as const,
+      href: "/assignment",
+      color: "#FF9800",
+    },
+    {
+      name: "Newsletter",
+      icon: "envelope.fill" as const,
+      href: "/newsletter",
+      color: "#9C27B0",
+    },
+    {
+      name: "Question Bank",
+      icon: "questionmark.circle.fill" as const,
+      href: "/question-bank",
+      color: "#F44336",
+    },
+    {
+      name: "Class Diary",
+      icon: "book.fill" as const,
+      href: "/class-diary",
+      color: "#00BCD4",
+    },
   ];
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }} headerImage={undefined}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.gridContainer}>
-        {Array.from({ length: Math.ceil(icons.length / 3) }).map((_, rowIdx) => (
-          <ThemedView key={rowIdx} style={styles.row}>
-            {icons.slice(rowIdx * 3, rowIdx * 3 + 3).map((item, colIdx) => (
-              <ThemedView key={item.name} style={styles.iconWrapper}>
-                {/* <Image
-                  source={item.icon}
-                  style={styles.icon}
-                /> */}
-                <AppIcon name={item.icon} size={50} />
-                <ThemedText
-                  type="defaultSemiBold"
-                  style={styles.iconLabel}
-                  onPress={() => navigation.navigate(item.screen)}
-                >
+    <ThemedView style={styles.root}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <ThemedText type="title" style={styles.headerText}>
+            Dashboard
+          </ThemedText>
+        </View>
+
+        <View style={styles.gridContainer}>
+          {dashboardItems.map((item, index) => (
+            <Link href={item.href as any} asChild key={index}>
+              <TouchableOpacity
+                style={[styles.card, { borderTopColor: item.color }]}
+                activeOpacity={0.7}
+              >
+                <IconSymbol
+                  size={48}
+                  name={item.icon}
+                  color={item.color}
+                  weight="regular"
+                />
+                <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
                   {item.name}
                 </ThemedText>
-              </ThemedView>
-            ))}
-          </ThemedView>
-        ))}
-      </ThemedView>
-      
-    </ParallaxScrollView>
+              </TouchableOpacity>
+            </Link>
+          ))}
+        </View>
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  root: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  header: {
+    marginBottom: 24,
+    paddingTop: 20,
+  },
+  headerText: {
+    fontSize: 32,
+    fontWeight: "bold",
   },
   gridContainer: {
-    marginVertical: 16,
-    paddingHorizontal: 8,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 16,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
+  card: {
+    width: "48%",
+    backgroundColor: "#f5f5f5",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderTopWidth: 4,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
-  iconWrapper: {
-    alignItems: 'center',
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  icon: {
-    width: 64,
-    height: 64,
-    marginBottom: 8,
-    borderRadius: 16,
-    backgroundColor: '#eee',
-  },
-  iconLabel: {
-    textAlign: 'center',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 258,
-    width: 430,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardTitle: {
+    marginTop: 12,
+    fontSize: 14,
+    textAlign: "center",
   },
 });
