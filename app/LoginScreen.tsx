@@ -1,120 +1,166 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const LOGIN_API_URL = 'https://your-api-url.com/login'; // Replace with your actual API endpoint
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
 
 export default function LoginScreen() {
-  const navigation = useNavigation();
-  const [mobile, setMobile] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const borderColor = useThemeColor({ light: "#ccc", dark: "#444" }, "icon");
+  const inputBg = useThemeColor(
+    { light: "#fff", dark: "#1c1c1e" },
+    "background",
+  );
+  const textColor = useThemeColor({}, "text");
+  const placeholderColor = useThemeColor(
+    { light: "#687076", dark: "#9BA1A6" },
+    "icon",
+  );
 
   const validate = () => {
-    if (!/^\d{10}$/.test(mobile)) {
-      setError('Enter a valid 10-digit mobile number');
+    if (!email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!isValidEmail(email)) {
+      setError("Enter a valid email address");
+      return false;
+    }
+    if (!password) {
+      setError("Password is required");
       return false;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return false;
     }
-    setError('');
+    setError("");
     return true;
   };
 
-  const handleLogin = async () => {
+  const handleSignIn = () => {
     if (!validate()) return;
-    setLoading(true);
-    try {
-      const response = await fetch(LOGIN_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, password }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        // Navigate to the index.tsx on successful login
-        // Uncomment the line below if you have a HomeScreen defined in your navigation stack
-        console.log('Login successful:', data);
-        // navigation.navigate('HomeScreen');
-      } else {
-        setError(data.message || 'Login failed');
-      }
-    } catch (err) {
-      setError('Server error. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
+    router.replace("/(tabs)");
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Mobile Number"
-        keyboardType="phone-pad"
-        value={mobile}
-        onChangeText={setMobile}
-        maxLength={10}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboard}
+      >
+        <ThemedView style={styles.container}>
+          <ThemedText type="title" style={styles.title}>
+            EduNectar
+          </ThemedText>
+          <TextInput
+            style={[
+              styles.input,
+              { borderColor, backgroundColor: inputBg, color: textColor },
+            ]}
+            placeholder="Email"
+            placeholderTextColor={placeholderColor}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={[
+              styles.input,
+              { borderColor, backgroundColor: inputBg, color: textColor },
+            ]}
+            placeholder="Password"
+            placeholderTextColor={placeholderColor}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          {error ? (
+            <ThemedText
+              style={styles.error}
+              lightColor="#c00"
+              darkColor="#ff6b6b"
+            >
+              {error}
+            </ThemedText>
+          ) : null}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSignIn}
+            activeOpacity={0.85}
+          >
+            <ThemedText
+              style={styles.buttonText}
+              lightColor="#fff"
+              darkColor="#fff"
+            >
+              Sign in
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
+  keyboard: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
     padding: 24,
-    backgroundColor: '#f8f8f8',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
     marginBottom: 32,
+    textAlign: "center",
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 48,
-    borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
-    backgroundColor: '#fff',
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 48,
-    backgroundColor: '#007AFF',
+    backgroundColor: "#0a7ea4",
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 8,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: "600",
   },
   error: {
-    color: 'red',
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
