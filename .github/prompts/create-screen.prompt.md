@@ -18,6 +18,7 @@ Use this prompt to quickly scaffold a new Expo Router screen with proper structu
 ## Output
 
 A complete screen file (`app/[screen-name].tsx`) with:
+
 - Proper imports and component structure
 - Type-safe data fetching with error handling
 - `ThemedView` and `ThemedText` for consistency
@@ -39,13 +40,14 @@ Fields: id, title, date, description, targetClass
 ```
 
 Generates:
+
 ```tsx
 // app/class-announcements.tsx
-import { StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { ENDPOINTS } from '@/constants/endpoints';
+import { StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ENDPOINTS } from "@/constants/endpoints";
 
 interface Announcement {
   id: string;
@@ -69,11 +71,11 @@ export default function ClassAnnouncements() {
       setError(null);
       const res = await fetch(ENDPOINTS.announcements);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      
+
       const data = await res.json();
       setAnnouncements(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load');
+      setError(err instanceof Error ? err.message : "Failed to load");
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ export default function ClassAnnouncements() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Class Announcements</ThemedText>
-      {announcements.map(announcement => (
+      {announcements.map((announcement) => (
         <ThemedView key={announcement.id} style={styles.item}>
           <ThemedText type="subtitle">{announcement.title}</ThemedText>
           <ThemedText>{announcement.date}</ThemedText>
@@ -98,7 +100,13 @@ export default function ClassAnnouncements() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  item: { marginVertical: 8, padding: 12, borderRadius: 8, borderColor: '#ccc', borderWidth: 1 },
+  item: {
+    marginVertical: 8,
+    padding: 12,
+    borderRadius: 8,
+    borderColor: "#ccc",
+    borderWidth: 1,
+  },
 });
 ```
 

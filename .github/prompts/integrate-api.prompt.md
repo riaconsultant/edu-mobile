@@ -43,17 +43,16 @@ Errors: 401 (unauthorized), 500 (server error)
 
 ```typescript
 // constants/endpoints.ts
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = "http://localhost:3000";
 
 export const ENDPOINTS = {
   // ... existing endpoints
-  
-  classAnnouncements: (grade: number, section: string) => 
+
+  classAnnouncements: (grade: number, section: string) =>
     `${BASE_URL}/api/v1/announcements?role=teacher&grade=${grade}&section=${section}`,
-  
-  announcementById: (id: string) => 
-    `${BASE_URL}/api/v1/announcements/${id}`,
-  
+
+  announcementById: (id: string) => `${BASE_URL}/api/v1/announcements/${id}`,
+
   createAnnouncement: `${BASE_URL}/api/v1/announcements`, // POST
 };
 ```
@@ -62,8 +61,8 @@ export const ENDPOINTS = {
 
 ```typescript
 // hooks/useClassAnnouncements.ts
-import { useState, useEffect } from 'react';
-import { ENDPOINTS } from '@/constants/endpoints';
+import { useState, useEffect } from "react";
+import { ENDPOINTS } from "@/constants/endpoints";
 
 export interface Announcement {
   id: string;
@@ -80,7 +79,10 @@ interface UseClassAnnouncementsResult {
   refetch: () => Promise<void>;
 }
 
-export function useClassAnnouncements(grade: number, section: string): UseClassAnnouncementsResult {
+export function useClassAnnouncements(
+  grade: number,
+  section: string,
+): UseClassAnnouncementsResult {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,25 +91,27 @@ export function useClassAnnouncements(grade: number, section: string): UseClassA
     try {
       setError(null);
       setLoading(true);
-      
+
       const url = ENDPOINTS.classAnnouncements(grade, section);
       const res = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${await getToken()}`, // Implement getToken()
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${await getToken()}`, // Implement getToken()
+          "Content-Type": "application/json",
         },
       });
 
       if (!res.ok) {
-        if (res.status === 401) throw new Error('Unauthorized');
-        if (res.status === 404) throw new Error('Announcements not found');
+        if (res.status === 401) throw new Error("Unauthorized");
+        if (res.status === 404) throw new Error("Announcements not found");
         throw new Error(`HTTP ${res.status}`);
       }
 
       const data = await res.json();
       setAnnouncements(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load announcements');
+      setError(
+        err instanceof Error ? err.message : "Failed to load announcements",
+      );
     } finally {
       setLoading(false);
     }
@@ -125,18 +129,18 @@ export function useClassAnnouncements(grade: number, section: string): UseClassA
 
 ```tsx
 // app/class-announcements.tsx
-import { useClassAnnouncements } from '@/hooks/useClassAnnouncements';
-import { ThemedView, ThemedText } from '@/components';
+import { useClassAnnouncements } from "@/hooks/useClassAnnouncements";
+import { ThemedView, ThemedText } from "@/components";
 
 export default function ClassAnnouncements() {
-  const { announcements, loading, error } = useClassAnnouncements(5, 'B');
+  const { announcements, loading, error } = useClassAnnouncements(5, "B");
 
   if (loading) return <ThemedText>Loading...</ThemedText>;
   if (error) return <ThemedText type="subtitle">Error: {error}</ThemedText>;
 
   return (
     <ThemedView>
-      {announcements.map(a => (
+      {announcements.map((a) => (
         <ThemedView key={a.id} style={{ padding: 12 }}>
           <ThemedText type="subtitle">{a.title}</ThemedText>
           <ThemedText>{a.date}</ThemedText>
@@ -150,12 +154,14 @@ export default function ClassAnnouncements() {
 ## Best Practices
 
 ### Endpoint Configuration
+
 - **Centralize URLs**: Store all endpoints in `constants/endpoints.ts`
 - **Use functions** for dynamic paths: `getUser: (id: string) => ${BASE_URL}/users/${id}`
 - **Document parameters**: Add JSDoc comments explaining required params
 - **Consistent naming**: Use descriptive, camelCase names (e.g., `classAnnouncements`, not `ca` or `announcements_list`)
 
 ### Fetch Patterns
+
 - **Always include error handling**: try-catch + user-facing error messages
 - **Loading states**: Set loading while fetching; clear on complete
 - **Abort on unmount** (optional): Use AbortController for cancellation if fetch takes long
@@ -163,12 +169,13 @@ export default function ClassAnnouncements() {
 - **Timeout handling**: Consider wrapping fetch with timeout logic
 
 ### Authentication
+
 ```typescript
 async function getAuthHeaders() {
   const token = await secureStorage.getToken(); // Implement based on your auth
   return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
   };
 }
 
@@ -178,21 +185,27 @@ const res = await fetch(url, { headers });
 ```
 
 ### Error Handling
+
 ```typescript
 try {
   const res = await fetch(url, options);
   if (!res.ok) {
     switch (res.status) {
-      case 401: throw new Error('Unauthorized. Please log in again.');
-      case 403: throw new Error('You do not have permission to view this.');
-      case 404: throw new Error('Item not found.');
-      case 500: throw new Error('Server error. Please try again later.');
-      default: throw new Error(`HTTP Error: ${res.status}`);
+      case 401:
+        throw new Error("Unauthorized. Please log in again.");
+      case 403:
+        throw new Error("You do not have permission to view this.");
+      case 404:
+        throw new Error("Item not found.");
+      case 500:
+        throw new Error("Server error. Please try again later.");
+      default:
+        throw new Error(`HTTP Error: ${res.status}`);
     }
   }
   return await res.json();
 } catch (err) {
-  console.error('API Error:', err);
+  console.error("API Error:", err);
   throw err;
 }
 ```
@@ -202,11 +215,13 @@ try {
 When moving from localhost dev to production:
 
 1. **Update BASE_URL** in `constants/endpoints.ts`:
+
    ```typescript
-   const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
    ```
 
 2. **Add environment config** in `app.json`:
+
    ```json
    {
      "extra": {
@@ -217,8 +232,9 @@ When moving from localhost dev to production:
 
 3. **Use in endpoints**:
    ```typescript
-   import Constants from 'expo-constants';
-   const BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000';
+   import Constants from "expo-constants";
+   const BASE_URL =
+     Constants.expoConfig?.extra?.apiUrl || "http://localhost:3000";
    ```
 
 ## Related Workflows

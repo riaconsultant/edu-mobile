@@ -18,6 +18,7 @@ Use this prompt to scaffold a new reusable component with proper theming, typing
 ## Output
 
 A complete component file (`components/[ComponentName].tsx`) with:
+
 - Proper TypeScript interfaces for props
 - `useThemeColor()` hook integration for light/dark support
 - Native `StyleSheet` for styling
@@ -33,7 +34,7 @@ Creating a "StudentCard" component for displaying student info:
 ```
 Name: StudentCard
 Type: themed
-Props: 
+Props:
   - id: string
   - name: string
   - grade: string
@@ -44,30 +45,31 @@ Location: root
 ```
 
 Generates:
+
 ```tsx
 // components/StudentCard.tsx
-import { Pressable, StyleSheet } from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { ThemedText } from './ThemedText';
-import { ThemedView } from './ThemedView';
+import { Pressable, StyleSheet } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { ThemedText } from "./ThemedText";
+import { ThemedView } from "./ThemedView";
 
 interface StudentCardProps {
   id: string;
   name: string;
   grade: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   onPress?: () => void;
   style?: any;
 }
 
 /**
  * StudentCard — Displays student information in a themed card layout.
- * 
+ *
  * @example
- * <StudentCard 
- *   id="123" 
- *   name="Alice" 
- *   grade="Grade 5" 
+ * <StudentCard
+ *   id="123"
+ *   name="Alice"
+ *   grade="Grade 5"
  *   status="active"
  *   onPress={() => navigate(`/student/${id}`)}
  * />
@@ -80,16 +82,19 @@ export function StudentCard({
   onPress,
   style,
 }: StudentCardProps) {
-  const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = status === 'active' ? '#34C759' : '#999';
+  const backgroundColor = useThemeColor({}, "background");
+  const borderColor = status === "active" ? "#34C759" : "#999";
 
   return (
-    <Pressable onPress={onPress} style={[styles.container, { backgroundColor, borderColor }, style]}>
+    <Pressable
+      onPress={onPress}
+      style={[styles.container, { backgroundColor, borderColor }, style]}
+    >
       <ThemedView style={styles.content}>
         <ThemedText type="subtitle">{name}</ThemedText>
         <ThemedText type="default">{grade}</ThemedText>
         <ThemedText style={[styles.status, { color: borderColor }]}>
-          {status === 'active' ? '✓ Active' : '○ Inactive'}
+          {status === "active" ? "✓ Active" : "○ Inactive"}
         </ThemedText>
       </ThemedView>
     </Pressable>
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: { gap: 4 },
-  status: { fontSize: 12, fontWeight: '500', marginTop: 8 },
+  status: { fontSize: 12, fontWeight: "500", marginTop: 8 },
 });
 ```
 
