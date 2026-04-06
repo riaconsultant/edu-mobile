@@ -14,7 +14,6 @@ Specialized agent for building complete features in the EduNectar mobile app, ha
    - Builds reusable components (PaymentCard, InvoiceList)
    - Integrates API endpoints
    - Handles role-based access (parent-only)
-   
 2. **Implementing role-based features**: E.g., "Add student analytics for teachers and parents"
    - Role-specific screens (TeacherAnalytics vs ParentAnalytics)
    - Role-specific data filtering
@@ -28,11 +27,13 @@ Specialized agent for building complete features in the EduNectar mobile app, ha
 ## Workflow
 
 ### Phase 1: Discovery
+
 - **Gather requirements**: Feature scope, user roles, API endpoints
 - **Review existing patterns**: Check `docs/modules-access.md`, components/, app/
 - **Plan architecture**: Identify new screens, components, API calls
 
 ### Phase 2: Implementation
+
 1. **Create API endpoints** in `constants/endpoints.ts`
 2. **Build reusable components** in `components/`
 3. **Create screens** in `app/` with full data fetching
@@ -40,12 +41,14 @@ Specialized agent for building complete features in the EduNectar mobile app, ha
 5. **Add role-based access** if needed
 
 ### Phase 3: Testing & Validation
+
 - **TypeScript validation**: Run `npm run lint`
 - **Manual testing**: Test in iOS/Android emulator
 - **Role-based testing**: Verify each role sees correct UI/data
 - **Error scenarios**: Verify error handling (network failures, invalid data)
 
 ### Phase 4: Documentation
+
 - **Update `docs/modules-access.md`** if role-based
 - **Add inline comments** for complex logic
 - **Update copilot-instructions** if new patterns introduced
@@ -53,8 +56,8 @@ Specialized agent for building complete features in the EduNectar mobile app, ha
 ## Example Usage
 
 ```
-User: "Add a class diary feature for teachers. Teachers should be able to 
-       write class notes, view past entries, and share with parents. 
+User: "Add a class diary feature for teachers. Teachers should be able to
+       write class notes, view past entries, and share with parents.
        Filter by class/date."
 
 Agent:
@@ -67,7 +70,7 @@ Agent:
 2. Implements:
    - Constants: Adds ENDPOINTS.classDiary endpoints
    - Components: DiaryEntry (card), DiaryForm (form with validation), DiaryFilter UI
-   - Screens: 
+   - Screens:
      - app/class-diary.tsx (list with filter, fetch from API)
      - app/class-diary-create.tsx (form, submit to API)
      - app/class-diary-detail.tsx (view entry, edit, share buttons)
@@ -88,6 +91,7 @@ Agent:
 ## Implementation Style
 
 ### Code Quality Rules
+
 - **TypeScript everywhere**: Define interfaces for all data structures
 - **Error handling**: Always include try-catch, show user-facing messages
 - **Theme consistency**: Use ThemedView, ThemedText, useThemeColor()
@@ -96,6 +100,7 @@ Agent:
 - **API pattern**: fetch in useEffect, store in useState, handle loading/error states
 
 ### Component Hierarchy
+
 ```
 Screen (app/*.tsx)
   ├─ ThemedView (main container)
@@ -106,6 +111,7 @@ Screen (app/*.tsx)
 ```
 
 ### File Organization
+
 ```
 When adding a feature:
 ├─ constants/endpoints.ts        [Add: ENDPOINTS.featureName]
@@ -119,6 +125,7 @@ When adding a feature:
 ## Design Patterns
 
 ### Data Fetching Pattern
+
 ```tsx
 useEffect(() => {
   loadData();
@@ -131,7 +138,7 @@ const loadData = async () => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     setData(await res.json());
   } catch (err) {
-    setError(err instanceof Error ? err.message : 'Unknown error');
+    setError(err instanceof Error ? err.message : "Unknown error");
   } finally {
     setLoading(false);
   }
@@ -139,10 +146,11 @@ const loadData = async () => {
 ```
 
 ### Role-Based Access Pattern
+
 ```tsx
 const userRole = useUserRole(); // Custom hook to fetch current user role
 
-if (!['teacher', 'admin'].includes(userRole)) {
+if (!["teacher", "admin"].includes(userRole)) {
   return <ThemedText>Access denied for your role</ThemedText>;
 }
 
@@ -150,8 +158,9 @@ return <FeatureUI />;
 ```
 
 ### Navigation Pattern
+
 ```tsx
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 
 const router = useRouter();
 
@@ -162,7 +171,7 @@ router.push(`/feature-detail/${id}`);
 // Implement back button:
 <Pressable onPress={() => router.back()}>
   <IconSymbol name="chevron.backward" />
-</Pressable>
+</Pressable>;
 ```
 
 ## Related Resources
