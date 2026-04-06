@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -14,11 +14,19 @@ export default function TabFeedScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    // Replace with your actual API endpoint
-    fetch(ENDPOINTS.ANNOUNCEMENTS + "/1")
-      .then((res) => res.json())
-      .then((data) => setFeeds(data))
-      .catch(() => setFeeds([]));
+    const loadFeeds = async () => {
+      try {
+        const endpoint = `${ENDPOINTS["announcements"] || ENDPOINTS.ANNOUNCEMENTS || "http://localhost:3000/api/announcements"}/1`;
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setFeeds(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch feeds:", err);
+        setFeeds([]);
+      }
+    };
+    loadFeeds();
   }, []);
 
   return (
@@ -58,16 +66,17 @@ export default function TabFeedScreen() {
               />
             </ThemedView>
             <ThemedText>Date: {feed.date}</ThemedText>
-            <ThemedText
-              style={{ color: "#007AFF", marginTop: 4 }}
+            <Pressable
               onPress={() => {
                 if (feed.attachment) {
                   router.push(feed.attachment);
                 }
               }}
             >
-              View Details
-            </ThemedText>
+              <ThemedText style={{ color: "#007AFF", marginTop: 4 }}>
+                View Details
+              </ThemedText>
+            </Pressable>
           </ThemedView>
         ))}
       </ThemedView>
