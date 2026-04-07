@@ -16,40 +16,60 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack initialRouteName="LoginScreen">
+        <Stack
+          initialRouteName="LoginScreen"
+          screenOptions={{
+            animationEnabled: true,
+            cardStyle: { backgroundColor: "transparent" },
+          }}
+        >
           {/* Login Screen - First Screen */}
-          <Stack.Screen name="LoginScreen" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="LoginScreen"
+            options={{
+              headerShown: false,
+              animationEnabled: false,
+            }}
+          />
 
           {/* Main Tab Navigation - After Login */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          {/* Detail Screens */}
+          {/* Detail Screens with Modal Presentation */}
           <Stack.Screen
             name="announcement-detail"
             options={{
               headerShown: false,
-              presentation: "card",
+              presentation: "modal",
+              gestureEnabled: true,
+              animationEnabled: true,
             }}
           />
           <Stack.Screen
             name="student-profile"
             options={{
               headerShown: false,
-              presentation: "card",
+              presentation: "modal",
+              gestureEnabled: true,
+              animationEnabled: true,
             }}
           />
           <Stack.Screen
             name="notifications"
             options={{
               headerShown: false,
-              presentation: "card",
+              presentation: "modal",
+              gestureEnabled: true,
+              animationEnabled: true,
             }}
           />
           <Stack.Screen
             name="change-password"
             options={{
               headerShown: false,
-              presentation: "card",
+              presentation: "modal",
+              gestureEnabled: true,
+              animationEnabled: true,
             }}
           />
 
